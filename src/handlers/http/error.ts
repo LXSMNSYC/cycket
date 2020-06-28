@@ -42,7 +42,7 @@ async function callErrorWithStatusCode(
       ctx.response.setHeader('Content-Type', 'application/json; charset=utf-8');
     }
     const content = await errorHandler(ctx, error);
-    ctx.response.end(JSON.stringify(content));
+    ctx.response.end(content);
     ctx.response.statusCode = statusCode;
   }
 }
