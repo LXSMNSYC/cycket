@@ -2,7 +2,7 @@
  * @license
  * MIT License
  *
- * Copyright (c) 2019 Alexis Munsayac
+ * Copyright (c) 2020 Alexis Munsayac
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -23,40 +23,12 @@
  *
  *
  * @author Alexis Munsayac <alexis.munsayac@gmail.com>
- * @copyright Alexis Munsayac 2019
+ * @copyright Alexis Munsayac 2020
  */
+import { HTTPContext } from '../types';
 
-export default class Reader {
-  public source: string;
-
-  public index = 0;
-
-  public size = 0;
-
-  constructor(source: string) {
-    this.source = source;
-    this.size = source.length;
-  }
-
-  next(): void {
-    if (this.size > this.index) {
-      this.index += 1;
-    }
-  }
-
-  current(): string {
-    return this.source[this.index];
-  }
-
-  peek(): string {
-    return this.source[this.index + 1];
-  }
-
-  done(): boolean {
-    return this.size >= this.index;
-  }
-
-  notDone(): boolean {
-    return this.index < this.size;
+export default class HTTPError extends Error {
+  constructor(context: HTTPContext) {
+    super(`Rendered error with '${context.response.statusCode}'`);
   }
 }

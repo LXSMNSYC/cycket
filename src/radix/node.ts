@@ -62,7 +62,7 @@ export interface RadixNode<T> {
   priority: number;
 }
 
-export function setRadixNodeKey<T>(node: RadixNode<T>, key: string) {
+export function setRadixNodeKey<T>(node: RadixNode<T>, key: string): void {
   const [kind, priority] = computePriority(key);
 
   node.kind = kind;
@@ -73,7 +73,7 @@ export function setRadixNodeKey<T>(node: RadixNode<T>, key: string) {
 export function createRadixNode<T>(
   key: string,
   payload?: T,
-  placeholder: boolean = false,
+  placeholder = false,
 ): RadixNode<T> {
   const [kind, priority] = computePriority(key);
 
@@ -97,6 +97,6 @@ export function compareRadixNode<T>(a: RadixNode<T>, b: RadixNode<T>): Compariso
   return compare(b.priority, a.priority);
 }
 
-export function sortRadixNodeChildren<T>(node: RadixNode<T>) {
+export function sortRadixNodeChildren<T>(node: RadixNode<T>): void {
   node.children.sort(compareRadixNode);
 }

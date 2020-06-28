@@ -26,13 +26,16 @@
     "@typescript-eslint/parser": "^3.4.0",
     "eslint": "^7.3.1",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
     "eslint-import-resolver-node": "^0.3.2",
     "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.22.0",
     "tsdx": "^0.13.2",
     "tslib": "^2.0.0",
     "typescript": "^3.9.5"
   },
   "repository": "https://github.com/LXSMNSYC/cyclic.git",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "fastify": "^2.15.0"
+  }
 }

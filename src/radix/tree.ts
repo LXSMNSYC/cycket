@@ -28,7 +28,9 @@
 /**
  * Core dependency
  */
-import { RadixNode, createRadixNode, sortRadixNodeChildren, setRadixNodeKey } from './node';
+import {
+  RadixNode, createRadixNode, sortRadixNodeChildren, setRadixNodeKey,
+} from './node';
 import { RadixResult, createRadixResult, useRadixResultNode } from './result';
 
 /**
@@ -60,8 +62,12 @@ function isSameKey(path: string, key: string): boolean {
   return (!different) && (pr.current() === '/' || !pr.notDone());
 }
 
+function checkParam(char: string): boolean {
+  return char === ':' || char === '*';
+}
+
 function checkMarkers(char: string): boolean {
-  return (char === '/' || char === ':' || char === '*');
+  return char === '/' || checkParam(char);
 }
 
 function isSharedKey(path: string, key: string): boolean {
@@ -74,7 +80,10 @@ function isSharedKey(path: string, key: string): boolean {
 
   let different = false;
 
-  while ((pr.notDone() && !checkMarkers(pr.current())) && (kr.notDone() && !checkMarkers(kr.current()))) {
+  while (
+    (pr.notDone() && !checkMarkers(pr.current()))
+    && (kr.notDone() && !checkMarkers(kr.current()))
+  ) {
     if (pr.current() !== kr.current()) {
       different = true;
       break;
@@ -119,18 +128,20 @@ function innerAdd<T>(path: string, payload: T, node: RadixNode<T>) {
 
     const newKey = path.slice(pr.index);
 
-    for (const child of node.children) {
+    for (let i = 0; i < node.children.length; i += 1) {
+      const child = node.children[i];
       if (child.key[0] === ':' && newKey[0] === ':') {
         if (!isSameKey(newKey, child.key)) {
           throw new SharedKeyError(newKey, child.key);
         }
-      } else if (child.key[0] !== newKey[0]) {
-        continue;
+        added = true;
+        innerAdd(newKey, payload, child);
+        break;
+      } else if (child.key[0] === newKey[0]) {
+        added = true;
+        innerAdd(newKey, payload, child);
+        break;
       }
-
-      added = true;
-      innerAdd(newKey, payload, child);
-      break;
     }
 
     if (!added) {
@@ -153,7 +164,7 @@ function innerAdd<T>(path: string, payload: T, node: RadixNode<T>) {
     newNode.children = [...node.children];
 
     setRadixNodeKey(node, path.slice(0, pr.index));
-    node.children = [ newNode ];
+    node.children = [newNode];
 
     if (pr.index < pr.size) {
       node.children.push(createRadixNode(path.slice(pr.index), payload));
@@ -171,7 +182,7 @@ function innerFind<T>(
   path: string,
   result: RadixResult<T>,
   node: RadixNode<T>,
-  first: boolean = false,
+  first = false,
 ) {
   const pl = path.length;
   const kl = node.key.length;
@@ -197,7 +208,7 @@ function innerFind<T>(
         useRadixResultNode(result, node);
 
         return;
-      case ':':
+      case ':': {
         const keySize = detectParamSize(kr);
         const pathSize = detectParamSize(pr);
 
@@ -208,7 +219,7 @@ function innerFind<T>(
 
         kr.index += keySize;
         pr.index += pathSize;
-
+      }
         break;
       default:
         kr.next();
@@ -232,8 +243,9 @@ function innerFind<T>(
 
     const newPath = path.slice(pr.index);
 
-    for (const child of node.children) {
-      if ((child.key[0] === '*' || child.key[0] === ':') || isSharedKey(newPath, child.key)) {
+    for (let i = 0; i < node.children.length; i += 1) {
+      const child = node.children[i];
+      if (checkParam(child.key[0]) || isSharedKey(newPath, child.key)) {
         useRadixResultNode(result, node, false);
 
         innerFind(newPath, result, child);
@@ -262,8 +274,6 @@ function innerFind<T>(
       result.params.set(node.key.slice(kr.index + 1), '');
 
       useRadixResultNode(result, node);
-
-      return;
     }
   }
 }
@@ -278,7 +288,11 @@ export function createRadixTree<T>(): RadixTree<T> {
   };
 }
 
-export function addRadixTreePath<T>(tree: RadixTree<T>, path: string, payload: T) {
+export function addRadixTreePath<T>(
+  tree: RadixTree<T>,
+  path: string,
+  payload: T,
+): void {
   if (tree.root.placeholder) {
     tree.root = createRadixNode(path, payload);
   } else {

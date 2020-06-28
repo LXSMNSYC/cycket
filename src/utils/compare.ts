@@ -29,7 +29,7 @@ export type Comparison = 1 | 0 | -1;
 
 export function compare(a: number, b: number): Comparison;
 export function compare(a: string, b: string): Comparison;
-export function compare(a: any, b: any): Comparison {
+export function compare(a: number | string, b: number | string): Comparison {
   if (a < b) {
     return -1;
   }

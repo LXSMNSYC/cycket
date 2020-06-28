@@ -2,7 +2,7 @@
  * @license
  * MIT License
  *
- * Copyright (c) 2019 Alexis Munsayac
+ * Copyright (c) 2020 Alexis Munsayac
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -23,40 +23,32 @@
  *
  *
  * @author Alexis Munsayac <alexis.munsayac@gmail.com>
- * @copyright Alexis Munsayac 2019
+ * @copyright Alexis Munsayac 2020
  */
+import { IncomingMessage, ServerResponse } from 'http';
+import { Context, JSONValue } from '../../types';
+import { Stack, Middleware, Listener } from '../../stack';
+import { CachedRadix } from '../../cached-radix';
 
-export default class Reader {
-  public source: string;
+export interface HTTPContext extends Context {
+  request: IncomingMessage;
+  response: ServerResponse;
+}
 
-  public index = 0;
+export type HTTPMiddleware = Middleware<HTTPContext>;
+export type HTTPListener = Listener<HTTPContext>;
+export type HTTPStack = Stack<HTTPContext>;
 
-  public size = 0;
+export interface HTTPHandler {
+  tree: CachedRadix<HTTPStack>;
+  radixPaths: string[];
+}
 
-  constructor(source: string) {
-    this.source = source;
-    this.size = source.length;
-  }
+export type HTTPErrorHandler = (ctx: HTTPContext, error: Error) => JSONValue | Promise<JSONValue>;
 
-  next(): void {
-    if (this.size > this.index) {
-      this.index += 1;
-    }
-  }
-
-  current(): string {
-    return this.source[this.index];
-  }
-
-  peek(): string {
-    return this.source[this.index + 1];
-  }
-
-  done(): boolean {
-    return this.size >= this.index;
-  }
-
-  notDone(): boolean {
-    return this.index < this.size;
-  }
+export interface HTTPConfig {
+  host: string;
+  port: number;
+  globalMiddleware: HTTPMiddleware[];
+  errorHandlers: Map<number, HTTPErrorHandler>;
 }

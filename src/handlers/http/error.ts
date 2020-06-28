@@ -25,32 +25,42 @@
  * @author Alexis Munsayac <alexis.munsayac@gmail.com>
  * @copyright Alexis Munsayac 2020
  */
-import { RadixNode } from './node';
+import RouteNotFoundError from '../../errors/route-not-found';
+import { HTTPConfig, HTTPContext, HTTPMiddleware } from './types';
+import HTTPError from './errors/http-error';
 
-export interface RadixResult<T> {
-  nodes: RadixNode<T>[];
-  key: string;
-  params: Map<string, string>;
-  payload?: T;
-}
+async function callErrorWithStatusCode(
+  config: HTTPConfig,
+  ctx: HTTPContext,
+  error: Error,
+  statusCode: number,
+) {
+  const errorHandler = config.errorHandlers.get(statusCode);
 
-export function createRadixResult<T>(): RadixResult<T> {
-  return {
-    nodes: [],
-    params: new Map<string, string>(),
-    key: '',
-  };
-}
-
-export function useRadixResultNode<T>(
-  result: RadixResult<T>,
-  node: RadixNode<T>,
-  payload = true,
-): void {
-  result.nodes.push(node);
-  result.key += node.key;
-
-  if (payload && node.payload) {
-    result.payload = node.payload;
+  if (errorHandler) {
+    if (!ctx.response.hasHeader('Content-Type')) {
+      ctx.response.setHeader('Content-Type', 'application/json; charset=utf-8');
+    }
+    const content = await errorHandler(ctx, error);
+    ctx.response.end(JSON.stringify(content));
+    ctx.response.statusCode = statusCode;
   }
+}
+
+export default function createHTTPErrorMiddleware(
+  config: HTTPConfig,
+): HTTPMiddleware {
+  return async (ctx, next) => {
+    try {
+      await next();
+    } catch (error) {
+      if (error instanceof RouteNotFoundError) {
+        await callErrorWithStatusCode(config, ctx, error, 404);
+      } else if (error instanceof HTTPError) {
+        await callErrorWithStatusCode(config, ctx, error, ctx.response.statusCode);
+      } else {
+        await callErrorWithStatusCode(config, ctx, error, 500);
+      }
+    }
+  };
 }
