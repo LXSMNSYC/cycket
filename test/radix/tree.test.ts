@@ -15,7 +15,7 @@ describe('RadixTree', () => {
     });
   });
 
-  describe('#add', () => {
+  describe('addRadixTreePath', () => {
 
     /**
      * New instance
@@ -235,7 +235,7 @@ describe('RadixTree', () => {
     });
   });
 
-  describe('#find', () => {
+  describe('findRadixTreeResult', () => {
     describe('single node', () => {
       test('result.found should be false when using a different path', () => {
         const tree = createRadixTree();
