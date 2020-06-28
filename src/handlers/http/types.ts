@@ -51,4 +51,5 @@ export interface HTTPConfig {
   port: number;
   globalMiddleware: HTTPMiddleware[];
   errorHandlers: Map<number, HTTPErrorHandler>;
+  env: string;
 }
