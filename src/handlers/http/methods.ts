@@ -25,7 +25,9 @@
  * @author Alexis Munsayac <alexis.munsayac@gmail.com>
  * @copyright Alexis Munsayac 2020
  */
-import { HTTPListener, HTTPMiddleware, HTTPConfig } from './types';
+import {
+  HTTPListener, HTTPMiddleware, HTTPConfig, HTTPErrorHandler,
+} from './types';
 import { createStack } from '../../stack';
 import PathSyntaxError from '../../errors/path-syntax';
 import { addHTTPHandlerStack } from './server';
@@ -110,7 +112,7 @@ export function OPTIONS(
 export function ERROR(
   config: HTTPConfig,
   statusCode: number,
-  listener: HTTPListener,
+  listener: HTTPErrorHandler,
 ): void {
   config.errorHandlers.set(statusCode, listener);
 }
