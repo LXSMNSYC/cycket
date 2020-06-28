@@ -26,11 +26,13 @@
  * @copyright Alexis Munsayac 2020
  */
 import { IncomingMessage, ServerResponse } from 'http';
+import https from 'https';
 import { Context, JSONValue } from '../../types';
 import { Stack, Middleware, Listener } from '../../stack';
 import { CachedRadix } from '../../cached-radix';
 
 export interface HTTPContext extends Context {
+  state: Map<string, unknown>;
   request: IncomingMessage;
   response: ServerResponse;
 }
@@ -47,6 +49,7 @@ export interface HTTPHandler {
 export type HTTPErrorHandler = (ctx: HTTPContext, error: Error) => JSONValue | Promise<JSONValue>;
 
 export interface HTTPConfig {
+  https?: https.ServerOptions;
   host: string;
   port: number;
   globalMiddleware: HTTPMiddleware[];

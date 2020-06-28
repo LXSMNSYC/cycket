@@ -31,7 +31,7 @@ import {
   HTTPHandler, HTTPConfig, HTTPStack, HTTPMiddleware,
 } from './types';
 import {
-  getRadixPath, concatStack, addStackSubTree, createStack, runStack,
+  getRadixPath, concatStack, createStack, runStack,
 } from '../../stack';
 import { createRadixTree, addRadixTreePath, findRadixTreeResult } from '../../radix/tree';
 import RouteSpecificityError from '../../errors/route-specificity';
@@ -83,7 +83,19 @@ export function addHTTPHandlerStack(
     if (result.key === node) {
       concatStack(result.payload, stack);
     } else {
-      addStackSubTree(result.payload, stack, node, method, path);
+      if (!result.payload.tree) {
+        result.payload.tree = createCachedRadix();
+      }
+
+      addCachedRadixPayload(result.payload.tree, node, stack);
+
+      if (method === 'GET') {
+        addCachedRadixPayload(
+          result.payload.tree,
+          getRadixPath('HEAD', path),
+          createStack([], () => ''),
+        );
+      }
     }
   } else {
     addHTTPHandlerTree(node, stack);

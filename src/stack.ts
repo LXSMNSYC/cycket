@@ -27,7 +27,7 @@
  */
 import { Context, JSONValue } from './types';
 import {
-  CachedRadix, findCachedRadixResult, createCachedRadix, addCachedRadixPayload,
+  CachedRadix, findCachedRadixResult,
 } from './cached-radix';
 import RouteNotFoundError from './errors/route-not-found';
 
@@ -100,26 +100,4 @@ export async function runStack<C extends Context>(
   }
 
   return null;
-}
-
-export function addStackSubTree<C extends Context>(
-  base: Stack<C>,
-  stack: Stack<C>,
-  node: string,
-  method: string,
-  path: string,
-): void {
-  if (!base.tree) {
-    base.tree = createCachedRadix();
-  }
-
-  addCachedRadixPayload(base.tree, node, stack);
-
-  if (method === 'GET') {
-    addCachedRadixPayload(
-      base.tree,
-      getRadixPath('HEAD', path),
-      createStack([], () => ''),
-    );
-  }
 }
