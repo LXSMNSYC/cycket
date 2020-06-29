@@ -25,11 +25,13 @@
  * @author Alexis Munsayac <alexis.munsayac@gmail.com>
  * @copyright Alexis Munsayac 2020
  */
-import runHTTP from './handlers/http';
-import * as methods from './handlers/http/methods';
+import runHTTP from './http';
+import * as methods from './http/methods';
+import { setErrorHandler } from './http/config';
 
 const http = {
   run: runHTTP,
+  setErrorHandler,
   ...methods,
 };
 
