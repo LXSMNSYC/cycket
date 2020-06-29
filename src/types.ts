@@ -25,10 +25,15 @@
  * @author Alexis Munsayac <alexis.munsayac@gmail.com>
  * @copyright Alexis Munsayac 2020
  */
+
+export interface ContextState {
+  [key: string]: unknown;
+}
 export interface Context {
   path: string;
   method: string;
   params?: Map<string, string>;
+  state: ContextState;
 }
 
 export type JSONValue =

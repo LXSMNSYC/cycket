@@ -88,7 +88,7 @@ export default function runHTTP(config: Partial<HTTPConfig> = {}): http.Server |
           path: new URL(request.url, `http://${defaultConfig.host}`).pathname,
           request,
           response,
-          state: new Map<string, unknown>(),
+          state: {},
         },
       ).catch(() => {
         // handle error

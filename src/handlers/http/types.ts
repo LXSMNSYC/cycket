@@ -32,7 +32,6 @@ import { Stack, Middleware, Listener } from '../../stack';
 import { CachedRadix } from '../../cached-radix';
 
 export interface HTTPContext extends Context {
-  state: Map<string, unknown>;
   request: IncomingMessage;
   response: ServerResponse;
 }
