@@ -31,7 +31,9 @@
 import {
   RadixNode, createRadixNode, sortRadixNodeChildren, setRadixNodeKey,
 } from './node';
-import { RadixResult, createRadixResult, useRadixResultNode } from './result';
+import {
+  RadixResult, createRadixResult, useRadixResultNode, setRadixResultParams,
+} from './result';
 
 /**
  * Exceptions
@@ -201,7 +203,8 @@ function innerFind<T>(
   ) {
     switch (kr.current()) {
       case '*':
-        result.params.set(
+        setRadixResultParams(
+          result,
           node.key.slice(kr.index + 1),
           path.slice(pr.index),
         );
@@ -212,7 +215,8 @@ function innerFind<T>(
         const keySize = detectParamSize(kr);
         const pathSize = detectParamSize(pr);
 
-        result.params.set(
+        setRadixResultParams(
+          result,
           node.key.slice(kr.index + 1, kr.index + keySize),
           path.slice(pr.index, pr.index + pathSize),
         );
@@ -271,7 +275,11 @@ function innerFind<T>(
         kr.next();
       }
 
-      result.params.set(node.key.slice(kr.index + 1), '');
+      setRadixResultParams(
+        result,
+        node.key.slice(kr.index + 1),
+        '',
+      );
 
       useRadixResultNode(result, node);
     }
