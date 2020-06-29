@@ -54,7 +54,7 @@ export function createStack<C extends Context>(
 }
 
 export function getRadixPath(method: string, path: string): string {
-  return `/${method.toLowerCase()}${path}`;
+  return `/${method}${path}`;
 }
 
 export function concatStack<C extends Context>(base: Stack<C>, stack: Stack<C>): void {
