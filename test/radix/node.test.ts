@@ -1,4 +1,4 @@
-import { createRadixNode, setRadixNodeKey, sortRadixNodeChildren, Kind } from '../../src/radix/node';
+import { createRadixNode, setRadixNodeKey, sortRadixNodeChildren } from '../../src/radix/node';
 
 describe('RadixNode', () => {
   /**
@@ -15,10 +15,10 @@ describe('RadixNode', () => {
 
     test('modifies kind when assigned', () => {
       const node = createRadixNode('abc');
-      expect(node.kind).toEqual(Kind.Normal);
+      expect(node.kind).toEqual(0);
 
       setRadixNodeKey(node, ':files');
-      expect(node.kind).toEqual(Kind.Named);
+      expect(node.kind).toEqual(1);
     });
   });
 
