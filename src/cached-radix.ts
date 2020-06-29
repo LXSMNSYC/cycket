@@ -63,7 +63,7 @@ export function findCachedRadixResult<T>(
 
   const result = findRadixTreeResult(radix.tree, path);
 
-  if (result.payload && result.params.size === 0) {
+  if (result.payload && result.params) {
     radix.cache.set(path, result);
   }
 
