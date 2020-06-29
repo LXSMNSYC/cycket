@@ -28,11 +28,7 @@
 import { compare, Comparison } from '../utils/compare';
 import Reader from '../utils/reader';
 
-export enum Kind {
-  Normal,
-  Named,
-  Glob
-}
+export type Kind = 0 | 1 | 2;
 
 function computePriority(key: string): [Kind, number] {
   const keyReader = new Reader(key);
@@ -41,16 +37,16 @@ function computePriority(key: string): [Kind, number] {
     const char = keyReader.current();
     switch (char) {
       case '*':
-        return [Kind.Glob, keyReader.index];
+        return [2, keyReader.index];
       case ':':
-        return [Kind.Named, keyReader.index];
+        return [1, keyReader.index];
       default:
         keyReader.next();
         break;
     }
   }
 
-  return [Kind.Normal, keyReader.index];
+  return [0, keyReader.index];
 }
 
 export interface RadixNode<T> {
