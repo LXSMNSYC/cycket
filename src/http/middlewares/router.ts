@@ -66,12 +66,15 @@ export function addHTTPHandlerStack(
   const node = getRadixPath(method, path);
 
   INSTANCE.radixPaths.forEach((existingPath) => {
-    const tree = createRadixTree();
-    addRadixTreePath(tree, node, node);
-    const result = findRadixTreeResult(tree, existingPath);
+    if (existingPath !== node) {
+      const tree = createRadixTree<string>();
+      addRadixTreePath(tree, node, node);
 
-    if (result.payload === node) {
-      throw new RouteSpecificityError(existingPath, node);
+      const result = findRadixTreeResult(tree, existingPath);
+
+      if (result.payload === node && result.key !== existingPath) {
+        throw new RouteSpecificityError(existingPath, node);
+      }
     }
   });
 
@@ -79,7 +82,7 @@ export function addHTTPHandlerStack(
 
   if (result.payload) {
     if (result.payload.listener) {
-      throw new ListenerAlreadyExistsError(method, path);
+      throw new ListenerAlreadyExistsError(method, path, result.key);
     }
     if (result.key === node) {
       concatStack(result.payload, stack);
@@ -128,6 +131,7 @@ const HTTP_ROUTER_MIDDLEWARE: HTTPMiddleware = async (ctx) => {
     throw new HTTPError(ctx);
   }
   if (!ctx.response.writableEnded) {
+    ctx.response.setHeader('Content-Type', 'application/json');
     ctx.response.end(JSON.stringify(content));
   }
 };
