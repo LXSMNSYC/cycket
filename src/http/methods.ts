@@ -37,7 +37,7 @@ export function ALL(
   middlewares?: HTTPMiddleware[],
   listener?: HTTPListener,
 ): void {
-  if (!path) {
+  if (!path.startsWith('/')) {
     throw new PathSyntaxError(path);
   }
   const stack = createStack(middlewares, listener);
@@ -52,7 +52,7 @@ function useMethod(
   middlewares?: HTTPMiddleware[],
   listener?: HTTPListener,
 ) {
-  if (!path) {
+  if (!path.startsWith('/')) {
     throw new PathSyntaxError(path);
   }
   const stack = createStack(middlewares, listener);
