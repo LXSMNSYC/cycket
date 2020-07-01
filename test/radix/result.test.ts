@@ -8,7 +8,7 @@ describe('RadixResult', () => {
     });
     test('given a single node, returns the key of that node', () => {
       const node = createRadixNode('/', 'root');
-      const result = createRadixResult()
+      const result = createRadixResult();
       useRadixResultNode(result, node);
 
       expect(result.key).toEqual('/');

@@ -16,7 +16,6 @@ describe('RadixTree', () => {
   });
 
   describe('addRadixTreePath', () => {
-
     /**
      * New instance
      */
@@ -315,8 +314,8 @@ describe('RadixTree', () => {
         expect(result.payload).toBeTruthy();
         expect(result.key).toEqual('/*all');
         expect(result.payload).toEqual('all');
-        expect(result.params.has('all')).toEqual(true);
-        expect(result.params.get('all')).toEqual('a/bc');
+        expect(result.params).toBeTruthy();
+        expect(result.params.all).toEqual('a/bc');
       });
 
       test('returns optional catch all', () => {
@@ -327,8 +326,8 @@ describe('RadixTree', () => {
         const result = findRadixTreeResult(tree, '/a');
         expect(result.payload).toBeTruthy();
         expect(result.key).toEqual('/a/*b');
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('b')).toBeFalsy();
+        expect(result.params).toBeTruthy();
+        expect(result.params.b).toBeFalsy();
       });
 
       test('returns optional catch all by globbing', () => {
@@ -338,8 +337,8 @@ describe('RadixTree', () => {
         const result = findRadixTreeResult(tree, '/a');
         expect(result.payload).toBeTruthy();
         expect(result.key).toEqual('/a*b');
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('a')).toBeFalsy();
+        expect(result.params).toBeTruthy();
+        expect(result.params.b).toBeFalsy();
       });
 
       test('fails to match catch call when not in full match', () => {
@@ -369,8 +368,8 @@ describe('RadixTree', () => {
         const result = findRadixTreeResult(tree, '/a/d');
         expect(result.payload).toBeTruthy();
         expect(result.key).toEqual('/a/*b');
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('b')).toEqual('d');
+        expect(result.params).toBeTruthy();
+        expect(result.params.b).toEqual('d');
       });
     });
 
@@ -407,8 +406,8 @@ describe('RadixTree', () => {
 
         const result = findRadixTreeResult(tree, '/a/s');
         expect(result.payload).toBeTruthy();
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('b')).toEqual('s');
+        expect(result.params).toBeTruthy();
+        expect(result.params.b).toEqual('s');
       });
 
       test('returns unicode values', () => {
@@ -419,8 +418,8 @@ describe('RadixTree', () => {
 
         const result = findRadixTreeResult(tree, 'a/こんにちは');
         expect(result.payload).toBeTruthy();
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('b')).toEqual('こんにちは');
+        expect(result.params).toBeTruthy();
+        expect(result.params.b).toEqual('こんにちは');
       });
 
       test('prefers named parameter over specific key with partially shared key', () => {
@@ -432,8 +431,8 @@ describe('RadixTree', () => {
         const result = findRadixTreeResult(tree, '/a/d');
         expect(result.payload).toBeTruthy();
         expect(result.key).toEqual('/a/:b');
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('b')).toEqual('d');
+        expect(result.params).toBeTruthy();
+        expect(result.params.b).toEqual('d');
       });
     });
 
@@ -456,10 +455,9 @@ describe('RadixTree', () => {
 
         const result = findRadixTreeResult(tree, '/c/d');
         expect(result.payload).toBeTruthy();
-        expect(result.params.has('a')).toEqual(true);
-        expect(result.params.get('a')).toEqual('c');
-        expect(result.params.has('b')).toEqual(true);
-        expect(result.params.get('b')).toEqual('d');
+        expect(result.params).toBeTruthy();
+        expect(result.params.a).toEqual('c');
+        expect(result.params.b).toEqual('d');
       });
     });
 
