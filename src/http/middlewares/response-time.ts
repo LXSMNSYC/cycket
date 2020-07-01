@@ -26,15 +26,14 @@
  * @copyright Alexis Munsayac 2020
  */
 
+import { performance } from 'perf_hooks';
 import { HTTPMiddleware } from '../types';
 
 const HTTP_RESPONSE_TIME_MIDDLEWARE: HTTPMiddleware = async (ctx, next) => {
-  const start = process.hrtime();
+  const start = performance.now();
   await next();
-  const delta = process.hrtime(start);
-  // Format to high resolution time with nano time
-  const computed = delta[0] * 1000 + delta[1] / 1000000;
-  ctx.response.setHeader('X-Response-Time', `${computed}ms`);
+  const delta = performance.now() - start;
+  ctx.response.setHeader('X-Response-Time', `${delta}ms`);
 };
 
 export default HTTP_RESPONSE_TIME_MIDDLEWARE;
