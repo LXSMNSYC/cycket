@@ -27,10 +27,13 @@
  */
 import { RadixNode } from './node';
 
+export interface RadixResultParams {
+  [key: string]: string;
+}
 export interface RadixResult<T> {
   nodes: RadixNode<T>[];
   key: string;
-  params?: Map<string, string>;
+  params: RadixResultParams;
   payload?: T;
 }
 
@@ -38,6 +41,7 @@ export function createRadixResult<T>(): RadixResult<T> {
   return {
     nodes: [],
     key: '',
+    params: {},
   };
 }
 
@@ -59,8 +63,5 @@ export function setRadixResultParams<T>(
   key: string,
   value: string,
 ): void {
-  if (!result.params) {
-    result.params = new Map();
-  }
-  result.params.set(key, value);
+  result.params[key] = value;
 }
