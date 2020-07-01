@@ -26,7 +26,7 @@
  * @copyright Alexis Munsayac 2020
  */
 export default class ListenerAlreadyExistsError extends Error {
-  constructor(method: string, path: string) {
-    super(`There is already an existing block for '/${method.toUpperCase()}${path}'.`);
+  constructor(method: string, path: string, found: string) {
+    super(`There is already an existing block for '/${method.toUpperCase()}${path}'. (found: ${found})`);
   }
 }
