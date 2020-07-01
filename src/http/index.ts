@@ -85,6 +85,7 @@ export default function runHTTP(config: Partial<HTTPConfig> = {}): http.Server |
           request,
           response,
           state: {},
+          params: {},
         },
       ).catch(() => {
         // handle error
