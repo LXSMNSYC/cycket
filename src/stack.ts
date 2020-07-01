@@ -30,6 +30,7 @@ import {
   CachedRadix, findCachedRadixResult,
 } from './cached-radix';
 import RouteNotFoundError from './errors/route-not-found';
+import InvalidNextCallError from './errors/invalid-next-call';
 
 export type NextFunction = () => Promise<boolean>;
 
@@ -68,7 +69,14 @@ export async function runMiddleware<C extends Context>(
   index = 0,
 ): Promise<boolean> {
   if (middlewares.length > index) {
-    await middlewares[index](ctx, () => runMiddleware(middlewares, ctx, index + 1));
+    let called = false;
+    await middlewares[index](ctx, () => {
+      if (called) {
+        throw new InvalidNextCallError();
+      }
+      called = true;
+      return runMiddleware(middlewares, ctx, index + 1);
+    });
     // Check if there are next middleware
     return true;
   }
