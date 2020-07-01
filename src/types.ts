@@ -26,13 +26,15 @@
  * @copyright Alexis Munsayac 2020
  */
 
+import { RadixResultParams } from './radix/result';
+
 export interface ContextState {
   [key: string]: unknown;
 }
 export interface Context {
   path: string;
   method: string;
-  params?: Map<string, string>;
+  params: RadixResultParams;
   state: ContextState;
 }
 
