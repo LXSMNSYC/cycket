@@ -43,14 +43,7 @@ const CONFIG: ConfigRef = {
 };
 
 export function patchConfig(newConfig: Partial<HTTPConfig>): void {
-  const { value } = CONFIG;
-
-  value.env = newConfig.env ?? value.env;
-  value.host = newConfig.host ?? value.host;
-  value.port = newConfig.port ?? value.port;
-  value.globalMiddleware = newConfig.globalMiddleware ?? value.globalMiddleware;
-  value.errorHandlers = newConfig.errorHandlers ?? value.errorHandlers;
-  value.https = newConfig.https;
+  Object.assign(CONFIG.value, newConfig);
 }
 
 export function setErrorHandler(code: number, handler: HTTPErrorHandler): void {
@@ -65,12 +58,12 @@ export function hasErrorHandler(code: number): boolean {
   return CONFIG.value.errorHandlers.has(code);
 }
 
-export function enqueueGlobalMiddleware(middleware: HTTPMiddleware): void {
-  CONFIG.value.globalMiddleware.unshift(middleware);
+export function enqueueGlobalMiddleware(...middleware: HTTPMiddleware[]): void {
+  CONFIG.value.globalMiddleware.unshift(...middleware);
 }
 
-export function pushGlobalMiddleware(middleware: HTTPMiddleware): void {
-  CONFIG.value.globalMiddleware.push(middleware);
+export function pushGlobalMiddleware(...middleware: HTTPMiddleware[]): void {
+  CONFIG.value.globalMiddleware.push(...middleware);
 }
 
 export function getEnv(): string {
