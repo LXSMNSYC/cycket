@@ -39,9 +39,7 @@ export default class Reader {
   }
 
   next(): void {
-    if (this.size > this.index) {
-      this.index += 1;
-    }
+    this.index += 1;
   }
 
   current(): string {
@@ -53,7 +51,7 @@ export default class Reader {
   }
 
   done(): boolean {
-    return this.size >= this.index;
+    return this.index >= this.size;
   }
 
   notDone(): boolean {
