@@ -9,6 +9,8 @@ A simple HTTP framework for NodeJS
 
 ## Example
 
+### Simple server
+
 ```ts
 import { http } from '@lxsmnsyc/cyclic';
 
@@ -22,3 +24,21 @@ http.GET('/:name', [], (ctx) => (
 
 http.run();
 ```
+
+## Goals
+
+### Core
+
+[X] HTTP
+[X] HTTPS
+[ ] WebSockets
+[ ] HTTP/2
+
+## Middlewares
+
+[X] Router
+[X] Error
+[X] Response Time
+[ ] Body Parser
+[ ] Static File Server
+[X] CORS
