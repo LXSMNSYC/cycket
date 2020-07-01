@@ -61,7 +61,7 @@ function isSameKey(path: string, key: string): boolean {
     kr.next();
   }
 
-  return (!different) && (pr.current() === '/' || !pr.notDone());
+  return (!different) && (pr.current() === '/' || pr.done());
 }
 
 function checkParam(char: string): boolean {
@@ -95,7 +95,7 @@ function isSharedKey(path: string, key: string): boolean {
     kr.next();
   }
 
-  return (!different) && (!kr.notDone() || checkMarkers(kr.current()));
+  return (!different) && (kr.done() || checkMarkers(kr.current()));
 }
 
 function detectParamSize(reader: Reader) {
@@ -232,7 +232,7 @@ function innerFind<T>(
     }
   }
 
-  if (!(pr.notDone() || kr.notDone()) && node.payload) {
+  if (pr.done() && kr.done() && node.payload) {
     useRadixResultNode(result, node);
 
     return;
