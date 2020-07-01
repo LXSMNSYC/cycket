@@ -27,12 +27,16 @@
  */
 import runHTTP from './http';
 import * as methods from './http/methods';
-import { setErrorHandler } from './http/config';
+import * as middlewares from './http/middlewares';
+import { setErrorHandler, enqueueGlobalMiddleware, pushGlobalMiddleware } from './http/config';
 
 const http = {
   run: runHTTP,
   setErrorHandler,
   ...methods,
+  middlewares,
+  enqueueGlobalMiddleware,
+  pushGlobalMiddleware,
 };
 
 export default http;
