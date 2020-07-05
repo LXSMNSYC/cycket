@@ -69,7 +69,7 @@ export function appendVaryHeader(header: string, ...fields: string[]): string | 
     return '*';
   }
 
-  let result;
+  let result = header;
 
   for (let i = 0; i < fields.length; i += 1) {
     const field = fields[i].toLowerCase();
@@ -90,7 +90,7 @@ export function setVary(response: ServerResponse, ...field: string[]): void {
   const vary = response.getHeader('Vary') ?? '';
   const header = Array.isArray(vary)
     ? vary.join(', ')
-    : String('');
+    : String(vary);
 
   // set new header
   const appended = appendVaryHeader(header, ...field);

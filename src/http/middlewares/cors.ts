@@ -26,24 +26,37 @@
  * @copyright Alexis Munsayac 2020
  */
 
-import { HTTPMiddleware } from '../types';
+import { HTTPMiddleware, HTTPContext } from '../types';
 import { setVary } from '../../utils/vary';
 
+type OptionalString = string | undefined;
+type CORSOrigin = OptionalString | ((ctx: HTTPContext) => OptionalString | Promise<OptionalString>);
+type CORSCredentials = boolean | ((ctx: HTTPContext) => boolean | Promise<boolean>);
 export interface HTTPCORSConfig {
   allowMethods: string | string[];
-  origin?: string;
+  origin?: CORSOrigin;
   exposeHeaders?: string | string[];
   allowHeaders?: string | string[];
   maxAge?: string | number;
-  credentials?: boolean;
+  credentials?: CORSCredentials;
 }
 
 const DEFAULT: HTTPCORSConfig = {
   allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
 };
 
-export default function createHTTPCORS(config: Partial<HTTPCORSConfig>): HTTPMiddleware {
-  const currentConfig: HTTPCORSConfig = Object.assign(DEFAULT, config);
+async function getCredentials(credentials: CORSCredentials, ctx: HTTPContext): Promise<boolean> {
+  if (typeof credentials === 'boolean') {
+    return credentials;
+  }
+  return credentials(ctx);
+}
+
+export default function createHTTPCORS(config: Partial<HTTPCORSConfig> = {}): HTTPMiddleware {
+  const currentConfig: HTTPCORSConfig = {
+    ...DEFAULT,
+    ...config,
+  };
 
   if (Array.isArray(currentConfig.allowHeaders)) {
     currentConfig.allowHeaders = currentConfig.allowHeaders.join(', ');
@@ -58,8 +71,6 @@ export default function createHTTPCORS(config: Partial<HTTPCORSConfig>): HTTPMid
     currentConfig.maxAge = currentConfig.maxAge.toString();
   }
 
-  const { credentials, origin } = currentConfig;
-
   return async (ctx, next) => {
     const requestOrigin = ctx.request.headers.origin;
 
@@ -70,12 +81,27 @@ export default function createHTTPCORS(config: Partial<HTTPCORSConfig>): HTTPMid
       return;
     }
 
-    const currentOrigin = origin ?? requestOrigin;
+    let currentOrigin: OptionalString;
+
+    const { credentials, origin } = currentConfig;
+
+    if (typeof origin === 'function') {
+      currentOrigin = await origin(ctx);
+
+      if (!currentOrigin) {
+        await next();
+        return;
+      }
+    } else {
+      currentOrigin = origin ?? requestOrigin;
+    }
+
+    const currentCredentials = credentials && await getCredentials(credentials, ctx);
 
     if (ctx.method !== 'OPTIONS') {
       ctx.response.setHeader('Access-Control-Allow-Origin', currentOrigin);
 
-      if (credentials) {
+      if (currentCredentials) {
         ctx.response.setHeader('Access-Control-Allow-Credentials', 'true');
       }
 
@@ -88,9 +114,10 @@ export default function createHTTPCORS(config: Partial<HTTPCORSConfig>): HTTPMid
         await next();
         return;
       }
+
       ctx.response.setHeader('Access-Control-Allow-Origin', currentOrigin);
 
-      if (credentials) {
+      if (currentCredentials) {
         ctx.response.setHeader('Access-Control-Allow-Credentials', 'true');
       }
 

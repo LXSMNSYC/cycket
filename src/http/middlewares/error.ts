@@ -35,10 +35,6 @@ async function callErrorWithStatusCode(
   error: Error,
   statusCode: number,
 ) {
-  // Check if we can still respond
-  if (ctx.response.writableEnded) {
-    return;
-  }
   // Attempt to get the code-specific error handler
   if (hasErrorHandler(statusCode)) {
     const errorHandler = getErrorHandler(statusCode);
